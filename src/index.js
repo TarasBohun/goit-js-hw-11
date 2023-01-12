@@ -1,55 +1,71 @@
-import { fetchImages } from './fetchPictures.js';
+import { fetchPictures } from './fetchPictures';
+import renderMarkup from './renderMarkup';
+import './css/styles.css';
 
 const searchForm = document.querySelector('.search-form');
 const input = document.querySelector('input');
 const gallery = document.querySelector('.gallery');
+const body = document.querySelector('body');
+const container = document.querySelector('.container');
+const btnLoadMore = document.querySelector('.btnLoadMore');
+// console.log(searchForm);
 
-searchForm.addEventListener('submit', onFormSubmit);
+searchForm.addEventListener('submit', onSearch);
 
-function onFormSubmit(e) {
+let searchQuery = '';
+let page = 1;
+const perPage = 5;
+
+// btnLoadMore.classList('visuallyhidden') = 'false';
+
+function onSearch(e) {
   e.preventDefault();
-  const inputValue = input.value;
-  //   console.log(inputValue);
+  searchQuery = e.currentTarget.elements.searchQuery.value;
 
-  fetchImages(inputValue, 5, 10)
+  if (searchQuery === '') {
+    return;
+  }
+
+  searchPictures();
+
+  // if (container.insertAdjacentHTML('beforeend', addLoadMoreBtn())) {
+  //   return;
+  // }
+
+  container.insertAdjacentHTML('beforeend', addLoadMoreBtn());
+
+  const btnLoadMore = document.querySelector('.btnLoadMore');
+  btnLoadMore.addEventListener('click', onLoadMore);
+
+  // perPage += 1;
+
+  clearPictures();
+}
+
+// renderMarkup(images);
+
+function searchPictures() {
+  fetchPictures(searchQuery, page, perPage)
     .then(data => {
-      //   console.log(data.hits);
-      gallery.innerHTML = renderMarkup(data.hits);
+      gallery.insertAdjacentHTML('beforeend', renderMarkup(data.hits));
+    })
+    .then(data => {
+      page += 1;
     })
     .catch(err => console.log(err));
 }
 
-function renderMarkup(images = []) {
-  //   console.log(images);
-  return images
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => {
-        return `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-  <div class="info">
-    <p class="info-item">
-      <b>Likes${likes}</b>
-    </p>
-    <p class="info-item">
-      <b>Views${views}</b>
-    </p>
-    <p class="info-item">
-      <b>Comments${comments}</b>
-    </p>
-    <p class="info-item">
-      <b>Downloads${downloads}</b>
-    </p>
-  </div>
-</div>`;
-      }
-    )
-    .join('');
+function addLoadMoreBtn() {
+  return `<button class='btnLoadMore' type="button">Load More</button>`;
+}
+
+function clearPictures() {
+  gallery.innerHTML = '';
+  // perPage = 0;
+}
+
+// btnLoadMore.addEventListener('click', onLoadMore);
+
+function onLoadMore() {
+  searchPictures();
 }
