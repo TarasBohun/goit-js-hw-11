@@ -15,6 +15,15 @@
   gap: 10px;
 }
 
+.is-hidden {
+  display: block;
+}
+
+.container-btn {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .visuallyhidden {
   position: absolute;
   white-space: nowrap;
