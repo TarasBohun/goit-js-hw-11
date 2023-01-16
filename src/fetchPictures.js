@@ -1,3 +1,4 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import axios from 'axios';
 
 const BASE_URL = 'https://pixabay.com/api/';
@@ -13,6 +14,6 @@ export async function fetchPictures(searchQuery, page, perPage) {
 
     return data;
   } catch (error) {
-    console.log(error);
+    Notify.failure(error.message);
   }
 }

@@ -1,10 +1,13 @@
 import { fetchPictures } from './fetchPictures';
 import renderMarkup from './renderMarkup';
 import './css/styles.css';
+import * as message from './showMessage';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+// import simpleLightbox from 'simplelightbox';
 
 const searchForm = document.querySelector('.search-form');
 const searchBtn = document.querySelector('.search-btn');
-// const container = document.querySelector('.container');
 const containerGallery = document.querySelector('.container-gallery');
 
 searchForm.addEventListener('submit', onSearch);
@@ -12,7 +15,7 @@ searchForm.addEventListener('submit', onSearch);
 let searchQuery = '';
 let page = null;
 let gallery = '';
-const perPage = 40;
+const perPage = 3;
 let btnLoadMore = '';
 
 function onSearch(e) {
@@ -26,7 +29,7 @@ function onSearch(e) {
   gallery = document.querySelector('.gallery');
 
   if (!searchQuery) {
-    return console.log('Enter your request, please.');
+    return message.onEmpty();
   }
 
   searchAddPictures();
@@ -44,15 +47,20 @@ function searchAddPictures() {
       if (data.hits.length === 0) {
         searchBtn.disabled = false;
 
-        return console.log(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
+        return message.onFetchError();
       }
 
       gallery.insertAdjacentHTML('beforeend', renderMarkup(data.hits));
 
+      new SimpleLightbox('a', {
+        captionsData: 'alt',
+        captionDelay: 250,
+      });
+
+      // SimpleLightbox.refresh();
+
       if (page === 1) {
-        console.log(`Hooray! We found ${data.totalHits} images.`);
+        message.onSuccess(data.totalHits);
       }
 
       if (page > 1) {
@@ -61,10 +69,8 @@ function searchAddPictures() {
 
       searchBtn.disabled = false;
 
-      if (data.total / perPage < page) {
-        return console.log(
-          "We're sorry, but you've reached the end of search results."
-        );
+      if (data.total / perPage < page && page > 1) {
+        return message.onEndSearch();
       }
 
       page += 1;

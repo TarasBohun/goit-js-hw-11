@@ -10,7 +10,7 @@ export default function renderMarkup(images) {
         comments,
         downloads,
       }) => {
-        return `<div class="photo-card">
+        return `<a href="${largeImageURL}"><div class="photo-card">
   <img src="${webformatURL}" alt="${tags}" loading="lazy" width='200'/>
   <div class="info">
     <p class="info-item">
@@ -26,7 +26,7 @@ export default function renderMarkup(images) {
       <b>Downloads${downloads}</b>
     </p>
   </div>
-</div>`;
+</div></a>`;
       }
     )
     .join('');
