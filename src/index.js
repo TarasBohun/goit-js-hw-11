@@ -15,7 +15,7 @@ searchForm.addEventListener('submit', onSearch);
 let searchQuery = '';
 let page = null;
 let gallery = '';
-const perPage = 3;
+const perPage = 40;
 let btnLoadMore = '';
 
 function onSearch(e) {
